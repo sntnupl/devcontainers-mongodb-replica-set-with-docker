@@ -1,7 +1,7 @@
 # Set up a secure MongoDB Replica-set for development using Docker
 
 This repository showcases how one can setup a secure MongoDB replica set for development using Docker.  
-I have explained the details of the `docker-compose.yml` file in my blog post, link to which can be found [at this link]().
+I have explained the details of the `docker-compose.yml` file in my blog post, link to which can be found [at this link](https://sntnupl.com/mongodb-replicaset-for-development-using-docker).
 
 ## Getting Started
 
