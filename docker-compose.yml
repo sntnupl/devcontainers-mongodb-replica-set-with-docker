@@ -28,11 +28,11 @@ services:
         container_name: 'mongo1'
         image: 'mongo:4.2'
         restart: 'on-failure'
-        command: ["-f", "/etc/mongod.conf", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+        command: ["-f", "/etc/mongod.conf", "--port", "30001", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         expose: 
-            - 27017
+            - 30001
         ports: 
-            - 30001:27017 
+            - 30001:30001 
         networks: 
             - netApplication
         volumes:
@@ -42,7 +42,7 @@ services:
             - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
             - ./.docker/mongodb/file.key:/auth/file.key
         healthcheck:
-            test: test $$(echo "rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
+            test: echo 'rs.status().ok' | mongo admin --port 30001 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
             interval: 30s
             start_period: 60s
         env_file:
@@ -56,12 +56,12 @@ services:
         hostname: 'mongo2'
         container_name: 'mongo2'
         image: 'mongo:4.2'
-        command: ["-f", "/etc/mongod.conf", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+        command: ["-f", "/etc/mongod.conf","--port", "30002", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         restart: 'on-failure'
         expose: 
-            - 27017
+            - 30002
         ports: 
-            - 30002:27017  
+            - 30002:30002  
         networks: 
             - netApplication
         volumes:
@@ -71,6 +71,10 @@ services:
             - ./.docker/mongodb/file.key:/auth/file.key
         env_file:
             - .env
+        healthcheck:
+            test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
+            interval: 30s
+            start_period: 60s
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -82,12 +86,12 @@ services:
         hostname: 'mongo3'
         container_name: 'mongo3'
         image: 'mongo:4.2'
-        command: ["-f", "/etc/mongod.conf", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+        command: ["-f", "/etc/mongod.conf", "--port", "30003", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
         restart: 'on-failure'
         expose: 
-            - 27017
+            - 30003
         ports: 
-            - 30003:27017  
+            - 30003:30003  
         networks: 
             - netApplication
         volumes:
@@ -97,6 +101,10 @@ services:
             - ./.docker/mongodb/file.key:/auth/file.key
         env_file:
             - .env
+        healthcheck:
+            test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
+            interval: 30s
+            start_period: 60s
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
